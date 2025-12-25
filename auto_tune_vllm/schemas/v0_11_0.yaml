@@ -121,6 +121,15 @@ parameters:
     default: 0  # vLLM default from cacheconfig
     description: "CPU offload memory in GB"
 
+  max_num_seqs:
+    type: "range"
+    data_type: "int"
+    min: 128
+    max: 2048
+    step: 64
+    # default: 0.9
+    description: "Maximum number of sequences"
+
 # vLLM CLI defaults for reference
 vllm_defaults:
   cacheconfig:
