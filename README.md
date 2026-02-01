@@ -87,3 +87,10 @@ auto-tune-vllm optimize --config study.yaml --max-concurrent 4
 ## License
 
 Apache License 2.0 - see [LICENSE](LICENSE) file for details.
+
+# AI21 Changelog:
+- Add to schema max_num_seqs so we can optimize it if we want to.
+- Set guidellm profile to constant.
+- Increase trial timeout.
+- Remove vllm requirement.
+- Pin guidellm version to 0.5.0.
