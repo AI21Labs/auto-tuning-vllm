@@ -89,6 +89,9 @@ auto-tune-vllm optimize --config study.yaml --max-concurrent 4
 Apache License 2.0 - see [LICENSE](LICENSE) file for details.
 
 # AI21 Changelog:
+## ba50270_0.1.1
+- feat: allow configuring GuideLLM's `profile` field via configuration, under 
+## ba50270_0.0.1
 - Add to schema max_num_seqs so we can optimize it if we want to.
 - Set guidellm profile to constant.
 - Increase trial timeout.

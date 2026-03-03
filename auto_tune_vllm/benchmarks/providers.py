@@ -318,7 +318,7 @@ class GuideLLMBenchmark(BenchmarkProvider):
             "--processor",
             processor,
             "--profile",
-            "constant",
+            config.profile,
             "--max-seconds",
             str(config.max_seconds),
             "--rate",

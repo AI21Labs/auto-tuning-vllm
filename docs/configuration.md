@@ -267,6 +267,16 @@ Number of concurrent requests to maintain during benchmarking. This simulates re
 - **Heavy load**: 200+ requests
 Default: 50
 
+#### `profile` (string, optional)
+GuideLLM load profile mode. Controls how requests are sent to the server:
+- **synchronous**: sequential requests
+- **concurrent**: parallel users
+- **throughput**: maximum capacity
+- **constant**: fixed requests/sec (rps)
+- **poisson**: randomized requests/sec
+- **sweep**: automatic rate exploration
+Default: "constant"
+
 ### Advanced Options
 
 #### `processor` (string, optional)
