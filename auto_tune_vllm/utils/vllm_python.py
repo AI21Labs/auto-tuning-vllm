@@ -10,6 +10,8 @@ import subprocess
 
 VLLM_PYTHON_ENV = "VLLM_PYTHON"
 DEFAULT_VLLM_PYTHON = "python3"
+# Module behind the `vllm` console script; `python -m vllm` fails (no __main__.py).
+VLLM_CLI_MODULE = "vllm.entrypoints.cli.main"
 
 
 def get_vllm_python() -> str:

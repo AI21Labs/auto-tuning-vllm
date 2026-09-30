@@ -17,7 +17,7 @@ from ray.exceptions import GetTimeoutError
 from ..benchmarks.providers import BenchmarkProvider, GuideLLMBenchmark
 from ..core.trial import ExecutionInfo, TrialConfig, TrialResult
 from ..logging.manager import CentralizedLogger
-from ..utils.vllm_python import get_vllm_python, is_vllm_importable
+from ..utils.vllm_python import VLLM_CLI_MODULE, get_vllm_python, is_vllm_importable
 
 logger = logging.getLogger(__name__)
 
@@ -641,7 +641,7 @@ class BaseTrialController(TrialController):
         # Get vLLM version from CLI command
         try:
             result = subprocess.run(
-                [get_vllm_python(), "-m", "vllm", "--version"],
+                [get_vllm_python(), "-m", VLLM_CLI_MODULE, "--version"],
                 capture_output=True,
                 text=True,
                 timeout=10,

@@ -18,7 +18,7 @@ from dataclasses import asdict, dataclass
 from enum import Enum
 from typing import Any, Dict, List, Optional, Tuple
 
-from .vllm_python import VLLM_PYTHON_ENV, get_vllm_python
+from .vllm_python import VLLM_CLI_MODULE, VLLM_PYTHON_ENV, get_vllm_python
 
 
 class ArgumentType(Enum):
@@ -83,7 +83,7 @@ class VLLMCLIParser:
         python_bin = self._python_bin()
         try:
             result = subprocess.run(
-                [python_bin, "-m", "vllm", "-v"],
+                [python_bin, "-m", VLLM_CLI_MODULE, "-v"],
                 capture_output=True,
                 text=True,
                 check=True,
@@ -104,7 +104,7 @@ class VLLMCLIParser:
         python_bin = self._python_bin()
         try:
             result = subprocess.run(
-                [python_bin, "-m", "vllm", "serve", "--help"],
+                [python_bin, "-m", VLLM_CLI_MODULE, "serve", "--help"],
                 capture_output=True,
                 text=True,
                 check=True,

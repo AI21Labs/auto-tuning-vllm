@@ -105,3 +105,17 @@ def test_cli_parser_prefers_vllm_python_over_venv(monkeypatch):
 
 def test_cli_parser_uses_venv_without_vllm_python():
     assert VLLMCLIParser(venv_path="/venv")._python_bin() == "/venv/bin/python"
+
+
+def test_cli_parser_invokes_the_vllm_cli_module(monkeypatch):
+    # vLLM ships no __main__.py, so `python -m vllm` exits 1.
+    calls = []
+
+    def fake_run(cmd, **kwargs):
+        calls.append(cmd)
+        return SimpleNamespace(stdout="0.25.0\n", returncode=0)
+
+    monkeypatch.setenv(VLLM_PYTHON_ENV, "/usr/bin/python3.12")
+    monkeypatch.setattr("auto_tune_vllm.utils.vllm_cli_parser.subprocess.run", fake_run)
+    assert VLLMCLIParser().get_vllm_version() == "0.25.0"
+    assert calls[0][:3] == ["/usr/bin/python3.12", "-m", "vllm.entrypoints.cli.main"]
