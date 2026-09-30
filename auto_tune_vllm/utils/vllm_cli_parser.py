@@ -10,12 +10,15 @@ This module provides functionality to:
 
 import ast
 import json
+import os
 import re
 import subprocess
 import sys
 from dataclasses import asdict, dataclass
 from enum import Enum
 from typing import Any, Dict, List, Optional, Tuple
+
+from .vllm_python import VLLM_PYTHON_ENV, get_vllm_python
 
 
 class ArgumentType(Enum):
@@ -66,14 +69,18 @@ class VLLMCLIParser:
         self.sections: Dict[str, List[str]] = {}
         self._vllm_version: Optional[str] = None
 
+    def _python_bin(self) -> str:
+        """Interpreter that runs vLLM: VLLM_PYTHON, else the venv, else this one."""
+        if os.environ.get(VLLM_PYTHON_ENV):
+            return get_vllm_python()
+        return f"{self.venv_path}/bin/python" if self.venv_path else sys.executable
+
     def get_vllm_version(self) -> str:
         """Get the vLLM version."""
         if self._vllm_version is not None:
             return self._vllm_version
 
-        python_bin = (
-            f"{self.venv_path}/bin/python" if self.venv_path else sys.executable
-        )
+        python_bin = self._python_bin()
         try:
             result = subprocess.run(
                 [python_bin, "-m", "vllm", "-v"],
@@ -94,9 +101,7 @@ class VLLMCLIParser:
 
     def get_help_output(self) -> str:
         """Execute 'vllm serve --help' and return the output."""
-        python_bin = (
-            f"{self.venv_path}/bin/python" if self.venv_path else sys.executable
-        )
+        python_bin = self._python_bin()
         try:
             result = subprocess.run(
                 [python_bin, "-m", "vllm", "serve", "--help"],

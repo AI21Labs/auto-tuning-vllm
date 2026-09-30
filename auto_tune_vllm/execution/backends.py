@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import concurrent.futures
 import logging
+import os
 import shutil
 import subprocess
 import sys
@@ -16,6 +17,7 @@ from typing import Dict, List, Optional, Tuple
 import ray
 
 from ..core.trial import TrialConfig, TrialResult
+from ..utils.vllm_python import VLLM_PYTHON_ENV
 
 logger = logging.getLogger(__name__)
 
@@ -168,6 +170,13 @@ class RayExecutionBackend(ExecutionBackend):
                     "Ray workers may use different Python installations. Consider using"
                     " --python-executable, --venv-path, or --conda-env options."
                 )
+
+        # Workers inherit env from the Ray head; forward VLLM_PYTHON explicitly in case
+        # the cluster was started from a different environment.
+        vllm_python = os.environ.get(VLLM_PYTHON_ENV)
+        if vllm_python:
+            runtime_env["env_vars"] = {VLLM_PYTHON_ENV: vllm_python}
+            logger.info(f"Ray workers will launch vLLM with: {vllm_python}")
 
         return runtime_env
 
