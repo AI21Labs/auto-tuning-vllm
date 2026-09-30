@@ -17,6 +17,7 @@ from ray.exceptions import GetTimeoutError
 from ..benchmarks.providers import BenchmarkProvider, GuideLLMBenchmark
 from ..core.trial import ExecutionInfo, TrialConfig, TrialResult
 from ..logging.manager import CentralizedLogger
+from ..utils.vllm_python import VLLM_CLI_MODULE, get_vllm_python, is_vllm_importable
 
 logger = logging.getLogger(__name__)
 
@@ -86,7 +87,6 @@ class BaseTrialController(TrialController):
             return
 
         required_packages = {
-            "vllm": "vLLM serving framework",
             "guidellm": "GuideLLM benchmarking tool",
             "optuna": "Optuna optimization framework",
             "ray": "Ray distributed computing",
@@ -110,6 +110,13 @@ class BaseTrialController(TrialController):
             except ImportError:
                 missing_packages.append(f"{package} ({description})")
 
+        # vLLM runs as a subprocess and may live in another environment (VLLM_PYTHON)
+        vllm_python = get_vllm_python()
+        if not is_vllm_importable(vllm_python):
+            missing_packages.append(
+                f"vllm (vLLM serving framework, not importable by {vllm_python})"
+            )
+
         if missing_packages:
             missing_list = "\n  - ".join(missing_packages)
             raise RuntimeError(
@@ -121,7 +128,7 @@ class BaseTrialController(TrialController):
 
         # Check if commands are available in PATH
         required_commands = {
-            "python3": "Python interpreter",
+            vllm_python: "Python interpreter for vLLM",
             "guidellm": "GuideLLM CLI tool",
         }
 
@@ -634,7 +641,10 @@ class BaseTrialController(TrialController):
         # Get vLLM version from CLI command
         try:
             result = subprocess.run(
-                ["vllm", "--version"], capture_output=True, text=True, timeout=10
+                [get_vllm_python(), "-m", VLLM_CLI_MODULE, "--version"],
+                capture_output=True,
+                text=True,
+                timeout=10,
             )
             if result.returncode == 0:
                 # vLLM CLI returns just the version number (e.g., "0.10.1.1")
@@ -844,7 +854,7 @@ class BaseTrialController(TrialController):
 
         # Build vLLM command
         cmd = [
-            "python3",
+            get_vllm_python(),
             "-m",
             "vllm.entrypoints.openai.api_server",
             "--model",

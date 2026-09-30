@@ -27,7 +27,6 @@ dependencies = [
     "optuna>=3.0.0",
     "optuna-integration[botorch]>=4.0.0",
     "ray[default]>=2.0.0",
-    "vllm>=0.11.0",
     "guidellm>=0.6.0,<0.7.0",
     "pyyaml>=6.0",
     "pydantic>=2.0.0",
@@ -38,6 +37,11 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
+# vLLM only runs as a trial subprocess; skip this extra when trials use another
+# environment's vLLM via VLLM_PYTHON (e.g. the system Python of a vLLM image).
+vllm = [
+    "vllm>=0.11.0",
+]
 postgresql = [
     "psycopg2-binary>=2.9.0",
 ]

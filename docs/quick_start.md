@@ -31,10 +31,10 @@ Install in editable mode so the CLI is available and source edits are reflected 
 
 ```bash
 # Using uv
-uv pip install -e .
+uv pip install -e ".[vllm]"
 
 # OR: pip
-pip install -e .
+pip install -e ".[vllm]"
 ```
 
 Verify the CLI is on PATH:

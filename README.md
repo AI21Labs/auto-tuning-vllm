@@ -24,7 +24,16 @@ For a detailed starter guide, see the [Quick Start Guide](docs/quick_start.md).
 ```bash
 git clone https://github.com/openshift-psap/auto-tuning-vllm.git
 cd auto-tuning-vllm
+pip install -e ".[vllm]"
+```
+
+To run trials with a vLLM installed in another environment (for example the system
+Python of a `vllm/vllm-openai` image), install without the extra and point
+`VLLM_PYTHON` at that interpreter:
+
+```bash
 pip install -e .
+export VLLM_PYTHON=/usr/bin/python3.12
 ```
 
 ### Basic Usage
